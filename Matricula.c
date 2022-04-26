@@ -5,8 +5,11 @@
 #define APPROVED 1
 #define FAILED 2
 
+
+int contClass1 , contClass2 , contClass3;
+
 typedef struct student{
-    int RA[4];
+    int RA[3];
     char *name;
     double score;
     int serie;
@@ -15,7 +18,7 @@ typedef struct student{
 
 typedef struct class{    
     int maxStudent;
-    STUDENT *student;
+    STUDENT student;
     STUDENT *end;
 } CLASS;
 
@@ -51,8 +54,25 @@ STUDENT *schoolEnrollment(char *name, int gradeSchool)
     student->next = NULL;
     student->RA[0] = 0; 
     student->RA[1] = gradeSchool;
-    student->RA[2] = 0;
-    student->RA[3] = 0;
+
+    if*(gradeSchool == 1){
+
+        student->RA[2] = contClass1 + 1;
+
+        contClass1++;
+    }else if(gradeSchool == 2){
+        
+        student->RA[2] = contClass2 + 1;
+
+
+        contClass2++;
+    }else if(gradeSchool == 3){
+        
+        student->RA[2] = contClass3 + 1;
+
+        contClass3++;
+    }
+
     return student;
 }
 CLASS *buildDiary(int gradeSchool)
@@ -64,14 +84,14 @@ void launchGradeSchool(int ra, double grade)
 }
 REPORT *approvedFailed(int gradeSchool)
 {
-    REPORT report;
-    return report;
+    REPORT report;  return report;
 }
 void launchGradeClass(CLASS *class)
 {
     STUDENT s = class->student;
     while (s != NULL)
-    { // loop na lista de aluno da TURMA        launchGradeSchool(s->ra, randomGrade());
+    { // loop na lista de aluno da TURMA        
+        launchGradeSchool(s->ra, randomGrade());
         s = s->next;
     }
 }
@@ -81,6 +101,12 @@ int main()
     REPORT *r1, *r2, *r3;
     STUDENT *s;
     int countStudent = 0;
+
+    // class control fot RA
+    contClass1 = 0;
+    contClass2 = 0;
+    contClass3 = 0;
+
     while (countStudent <= 90)
     {
         s = schoolEnrollment(randomName(), randomGradeSchool());
