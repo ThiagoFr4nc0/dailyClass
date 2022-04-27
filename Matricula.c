@@ -5,8 +5,14 @@
 #define FAILED 2
 
 int contClass1 , contClass2 , contClass3;
+ 
+typedef struct ra{
+    int id[2];
+    int address;
+} RA;
+
 typedef struct student{
-    int RA[3];
+    RA *ra;
     char *name;
     double score;
     int serie;
@@ -17,6 +23,7 @@ typedef struct class{
     STUDENT *student;
     STUDENT *end;
     int gradeSchool;
+    int address;
 } CLASS;
 typedef struct report{
     CLASS class;
@@ -43,40 +50,55 @@ char *randomName()
 STUDENT *schoolEnrollment(char *name, int gradeSchool)
 {
     STUDENT *student;
+
+     student = (STUDENT *) malloc(sizeof (STUDENT));
+
     student->name = name;
     student->serie = gradeSchool;
     student->score = 0;
     student->next = NULL;
-    student->RA[0] = 0; 
-    student->RA[1] = gradeSchool;
+    student->ra->address = &student;
+    student->ra->id[0] = gradeSchool;
+
     if(gradeSchool == 1){
-        student->RA[2] = contClass1 + 1;
+        student->ra->id[1] = contClass1 + 1;
         contClass1++;
     }else if(gradeSchool == 2){
-        student->RA[2] = contClass2 + 1;
+        student->ra->id[1] = contClass2 + 1;
         contClass2++;
     }else if(gradeSchool == 3){
-        student->RA[2] = contClass3 + 1;
+        student->ra->id[1] = contClass3 + 1;
         contClass3++;
     }
+
+    printf("done!");
+
     return student;
 }
 CLASS *buildDiary(int gradeSchool)
 {
     CLASS *class;
+
+    class = (CLASS *) malloc(sizeof (CLASS));
+
     class->student= NULL;
     class->end = NULL;
     class->gradeSchool = gradeSchool;
+    class->address = &class;
+
     return class;
 }
-void launchGradeSchool(int ra, double grade)
-{   
+void launchGradeSchool(RA *ra, double grade)
+{
+    printf("%f", grade);   
 }
 REPORT *approvedFailed(int gradeSchool)
 {
     REPORT *report; 
     CLASS class;
-    report->class = class;
+
+    report = (REPORT *) malloc(sizeof (REPORT));
+
     report->porcent = 4;
     return report;
 }
@@ -86,7 +108,7 @@ void launchGradeClass(CLASS *class)
 
     while (s != NULL){ 
                  
-    launchGradeSchool(s->RA, randomGrade());
+    launchGradeSchool(s->ra, randomGrade());
         s = s->next;
     }
 }
