@@ -5,25 +5,21 @@
 #define FAILED 2
 
 int contClass1 , contClass2 , contClass3;
- 
-typedef struct ra{
-    int id[2];
-    int address;
-} RA;
-
 typedef struct student{
-    RA *ra;
     char *name;
     double score;
     int serie;
-    struct student *next;
 } STUDENT;
+typedef struct ra{
+    int id[2];
+    STUDENT student;
+    STUDENT *next;
+} RA;
 typedef struct class{    
     int maxStudent;
-    STUDENT *student;
-    STUDENT *end;
+    RA *ra;
+    RA *end;
     int gradeSchool;
-    int address;
 } CLASS;
 typedef struct report{
     CLASS class;
@@ -50,42 +46,44 @@ char *randomName()
 STUDENT *schoolEnrollment(char *name, int gradeSchool)
 {
     STUDENT *student;
-
-     student = (STUDENT *) malloc(sizeof (STUDENT));
-
+    RA *ra;
+    student = (STUDENT *) malloc(sizeof (STUDENT));
+    ra = (RA *) malloc(sizeof (RA));
+    gradeSchool++;
+    printf("\n gradeSchool : %i" , gradeSchool);
     student->name = name;
     student->serie = gradeSchool;
     student->score = 0;
-    student->next = NULL;
-    student->ra->address = &student;
-    student->ra->id[0] = gradeSchool;
-
+    ra->next = NULL;
+    ra->id[0] = gradeSchool;
     if(gradeSchool == 1){
-        student->ra->id[1] = contClass1 + 1;
+        ra->id[1] = contClass1 + 1;
         contClass1++;
     }else if(gradeSchool == 2){
-        student->ra->id[1] = contClass2 + 1;
+        ra->id[1] = contClass2 + 1;
         contClass2++;
     }else if(gradeSchool == 3){
-        student->ra->id[1] = contClass3 + 1;
+        ra->id[1] = contClass3 + 1;
         contClass3++;
+    }else{
+        return NULL;
     }
-
-    printf("done!");
-
+    printf("\n RA : %i %i",ra->id[0],ra->id[1]);
+    printf("\ndone!\n\n");
     return student;
 }
 CLASS *buildDiary(int gradeSchool)
 {
     CLASS *class;
-
+    
     class = (CLASS *) malloc(sizeof (CLASS));
-
-    class->student= NULL;
+    class->ra= NULL;
     class->end = NULL;
     class->gradeSchool = gradeSchool;
-    class->address = &class;
+    class->maxStudent = 40;
 
+    printf("\ndone CLASS");
+    
     return class;
 }
 void launchGradeSchool(RA *ra, double grade)
@@ -96,19 +94,15 @@ REPORT *approvedFailed(int gradeSchool)
 {
     REPORT *report; 
     CLASS class;
-
     report = (REPORT *) malloc(sizeof (REPORT));
-
     report->porcent = 4;
     return report;
 }
 void launchGradeClass(CLASS *class)
 {
-    STUDENT *s = class->student;
-
+    RA *s = class->ra;
     while (s != NULL){ 
-                 
-    launchGradeSchool(s->ra, randomGrade());
+    launchGradeSchool(s, randomGrade());
         s = s->next;
     }
 }
@@ -118,14 +112,13 @@ int main()
     REPORT *r1, *r2, *r3;
     STUDENT *s;
     int countStudent = 0; 
-       
     contClass1 = 0;
     contClass2 = 0;
     contClass3 = 0;
-
-    while (countStudent <= 90)
+    while (countStudent <= 4)
     {
         s = schoolEnrollment(randomName(), randomGradeSchool());
+        countStudent++;
     }
     c1 = buildDiary(1);
     c2 = buildDiary(2);
@@ -136,6 +129,5 @@ int main()
     r1 = approvedFailed(1);
     r2 = approvedFailed(2);
     r3 = approvedFailed(3);
-
     return 0;
 }
