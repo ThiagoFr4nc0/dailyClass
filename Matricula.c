@@ -12,11 +12,10 @@ typedef struct student{
 } STUDENT;
 typedef struct ra{
     int id[2];
-    STUDENT student;
+    STUDENT *student;
     STUDENT *next;
 } RA;
 typedef struct class{    
-    int maxStudent;
     RA *ra;
     RA *end;
     int gradeSchool;
@@ -39,7 +38,7 @@ char *randomName()
     char name[sizeName];
     for(i = 0; i < sizeName; i++){
         name[i] = (rand() % 26) + 65;
-        printf("%c", name[i]);
+        printf(" %c", name[i]);
     }
     return name;
 }
@@ -50,11 +49,18 @@ STUDENT *schoolEnrollment(char *name, int gradeSchool)
     student = (STUDENT *) malloc(sizeof (STUDENT));
     ra = (RA *) malloc(sizeof (RA));
     gradeSchool++;
-    printf("\n gradeSchool : %i" , gradeSchool);
+    printf("\n gradeSchool : %2.2i" , gradeSchool);
+
+    ra->student = student;
+    
     student->name = name;
     student->serie = gradeSchool;
     student->score = 0;
+
+    printf("\n Nome : %c" ,ra->student->name);
+
     ra->next = NULL;
+
     ra->id[0] = gradeSchool;
     if(gradeSchool == 1){
         ra->id[1] = contClass1 + 1;
@@ -68,21 +74,23 @@ STUDENT *schoolEnrollment(char *name, int gradeSchool)
     }else{
         return NULL;
     }
-    printf("\n RA : %i %i",ra->id[0],ra->id[1]);
-    printf("\ndone!\n\n");
+
+    printf("\n RA : %2.2i%2.2i",ra->id[0],ra->id[1]);
+    printf("\n done!\n\n");
     return student;
 }
 CLASS *buildDiary(int gradeSchool)
 {
     CLASS *class;
+    RA *ra;
     
     class = (CLASS *) malloc(sizeof (CLASS));
-    class->ra= NULL;
+    class->ra = NULL;
     class->end = NULL;
     class->gradeSchool = gradeSchool;
-    class->maxStudent = 40;
 
-    printf("\ndone CLASS");
+
+    printf("\ndone CLASS %i", gradeSchool);
     
     return class;
 }
@@ -99,7 +107,7 @@ REPORT *approvedFailed(int gradeSchool)
     return report;
 }
 void launchGradeClass(CLASS *class)
-{
+{   
     RA *s = class->ra;
     while (s != NULL){ 
     launchGradeSchool(s, randomGrade());
@@ -115,7 +123,7 @@ int main()
     contClass1 = 0;
     contClass2 = 0;
     contClass3 = 0;
-    while (countStudent <= 4)
+    while (countStudent <= 3)
     {
         s = schoolEnrollment(randomName(), randomGradeSchool());
         countStudent++;
@@ -123,6 +131,7 @@ int main()
     c1 = buildDiary(1);
     c2 = buildDiary(2);
     c3 = buildDiary(3);
+    printf("\nlança nota!");
     launchGradeClass(c1);
     launchGradeClass(c2);
     launchGradeClass(c3);
