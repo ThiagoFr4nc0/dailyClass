@@ -42,6 +42,10 @@ char *randomName()
     }
     return name;
 }
+void printName(char *name){
+    printf("\n Name : %p", name);
+
+}
 STUDENT *schoolEnrollment(char *name, int gradeSchool)
 {
     STUDENT *student;
@@ -57,7 +61,7 @@ STUDENT *schoolEnrollment(char *name, int gradeSchool)
     student->serie = gradeSchool;
     student->score = 0;
 
-    printf("\n Nome : %c" ,ra->student->name);
+    printName(ra->student->name);
 
     ra->next = NULL;
 
