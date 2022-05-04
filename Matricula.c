@@ -3,8 +3,6 @@
 #include <math.h>
 #define APPROVED 1
 #define FAILED 2
-
-int contClass1 , contClass2 , contClass3;
 typedef struct student{
     char *name;
     double score;
@@ -13,7 +11,7 @@ typedef struct student{
 typedef struct ra{
     int id[2];
     STUDENT *student;
-    STUDENT *next;
+    struct ra *next;
 } RA;
 typedef struct class{    
     RA *ra;
@@ -21,9 +19,15 @@ typedef struct class{
     int gradeSchool;
 } CLASS;
 typedef struct report{
-    CLASS class;
+    RA *ra;
+    RA *end;
     double porcent;    
 } REPORT;
+
+int contClass1 , contClass2 , contClass3;
+RA *raList;
+
+
 int randomGradeSchool()
 {
     return rand() % 3;
@@ -31,6 +35,13 @@ int randomGradeSchool()
 int randomGrade()
 {
     return rand() % 10;
+}
+void initRaList(RA *raList){
+    raList = (RA *) malloc(sizeof (RA));
+    raList->id[0] = 0;
+    raList->id[1] = 0;
+    raList->student = NULL;
+    raList->next = NULL;
 }
 char *randomName()
 {
@@ -43,28 +54,20 @@ char *randomName()
     return name;
 }
 void printName(char *name){
-    printf("\n Name : %p", name);
-
+ printf("\n |Name.......: %c", name);
 }
 STUDENT *schoolEnrollment(char *name, int gradeSchool)
 {
     STUDENT *student;
-    RA *ra;
+    RA *ra , *aux;
     student = (STUDENT *) malloc(sizeof (STUDENT));
     ra = (RA *) malloc(sizeof (RA));
-    gradeSchool++;
-    printf("\n gradeSchool : %2.2i" , gradeSchool);
-
-    ra->student = student;
-    
     student->name = name;
     student->serie = gradeSchool;
     student->score = 0;
-
-    printName(ra->student->name);
-
+    ra->student = student;
     ra->next = NULL;
-
+    gradeSchool++;
     ra->id[0] = gradeSchool;
     if(gradeSchool == 1){
         ra->id[1] = contClass1 + 1;
@@ -78,42 +81,81 @@ STUDENT *schoolEnrollment(char *name, int gradeSchool)
     }else{
         return NULL;
     }
+    aux = raList;
+    raList = ra;
+    raList->next = aux;
+    printf("\n ------------------");
+    printName(ra->student->name);
+    printf("\n |RA.........: %2.2i%2.2i ",ra->id[0],ra->id[1]);
+    printf("\n ------------------\n\n");
 
-    printf("\n RA : %2.2i%2.2i",ra->id[0],ra->id[1]);
-    printf("\n done!\n\n");
+    
     return student;
 }
 CLASS *buildDiary(int gradeSchool)
 {
     CLASS *class;
-    RA *ra;
-    
+    RA *aux;
     class = (CLASS *) malloc(sizeof (CLASS));
-    class->ra = NULL;
-    class->end = NULL;
+    aux = raList;
+    while (aux->next != NULL)
+    {
+        aux = aux->next;
+        
+        if(aux->id[0] == gradeSchool){
+            class->ra = aux;
+            printf("\n |RA.........: %2.2i%2.2i ",class->ra->id[0],class->ra->id[1]);
+        }
+    }
+    class->end = aux;
     class->gradeSchool = gradeSchool;
 
-
+    if(class->ra == NULL){
+        return NULL;
+    }
     printf("\ndone CLASS %i", gradeSchool);
-    
     return class;
 }
 void launchGradeSchool(RA *ra, double grade)
-{
-    printf("%f", grade);   
+{   
+    ra->student->score = grade;
+    printf("\n ------------------");
+    printName(ra->student->name);
+    printf("\n |RA.........: %2.2i%2.2i ",ra->id[0],ra->id[1]);
+    printf("\n |Score......: %2.2f ",ra->student->score);
+    printf("\n ------------------\n\n");
 }
 REPORT *approvedFailed(int gradeSchool)
 {
-    REPORT *report; 
-    CLASS class;
-    report = (REPORT *) malloc(sizeof (REPORT));
+    REPORT *report;
+    RA *ra, *aux; 
+   report = (REPORT *) malloc(sizeof (REPORT));
+
+     aux = raList;
+     while (aux->next != NULL)
+    {
+        aux = aux->next;
+        
+        if(aux->id[0] == gradeSchool){
+            ra = aux;
+            printf("\n |RA.........: %2.2i%2.2i ",ra->id[0],ra->id[1]);
+        }
+    }
+    report->end = aux;
+
     report->porcent = 4;
     return report;
 }
 void launchGradeClass(CLASS *class)
 {   
+    if(class->ra == NULL){
+        return NULL;
+    }
+
     RA *s = class->ra;
-    while (s != NULL){ 
+    while (s->next != NULL){ 
+        printf("\n |RA.........: %2.2i%2.2i ",s->id[0],s->id[1]);
+        printf("\n |RA.........: %2.2i%2.2i ",s->next->id[0],s->next->id[1]);
     launchGradeSchool(s, randomGrade());
         s = s->next;
     }
@@ -127,6 +169,7 @@ int main()
     contClass1 = 0;
     contClass2 = 0;
     contClass3 = 0;
+    initRaList(raList);
     while (countStudent <= 3)
     {
         s = schoolEnrollment(randomName(), randomGradeSchool());
@@ -135,7 +178,6 @@ int main()
     c1 = buildDiary(1);
     c2 = buildDiary(2);
     c3 = buildDiary(3);
-    printf("\nlança nota!");
     launchGradeClass(c1);
     launchGradeClass(c2);
     launchGradeClass(c3);
