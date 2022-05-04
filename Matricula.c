@@ -20,8 +20,7 @@ typedef struct class{
 } CLASS;
 typedef struct report{
     RA *ra;
-    RA *end;
-    double porcent;    
+    RA *end;  
 } REPORT;
 
 int contClass1 , contClass2 , contClass3;
@@ -110,9 +109,6 @@ CLASS *buildDiary(int gradeSchool)
     class->end = aux;
     class->gradeSchool = gradeSchool;
 
-    if(class->ra == NULL){
-        return NULL;
-    }
     printf("\ndone CLASS %i", gradeSchool);
     return class;
 }
@@ -139,11 +135,15 @@ REPORT *approvedFailed(int gradeSchool)
         if(aux->id[0] == gradeSchool){
             ra = aux;
             printf("\n |RA.........: %2.2i%2.2i ",ra->id[0],ra->id[1]);
+            if (ra->student->score > 5){
+            printf(" |Score......: APROVED ");
+            }else{
+            printf(" |Score......: REPROVED ");    
+            }
+            
         }
     }
     report->end = aux;
-
-    report->porcent = 4;
     return report;
 }
 void launchGradeClass(CLASS *class)
@@ -151,11 +151,10 @@ void launchGradeClass(CLASS *class)
     if(class->ra == NULL){
         return NULL;
     }
-
+    printf("LANCANDO NOTA");
     RA *s = class->ra;
-    while (s->next != NULL){ 
-        printf("\n |RA.........: %2.2i%2.2i ",s->id[0],s->id[1]);
-        printf("\n |RA.........: %2.2i%2.2i ",s->next->id[0],s->next->id[1]);
+    while (s->next != NULL){
+    printf("\n |RA.........: %2.2i%2.2i ",s->id[0],s->id[1]); 
     launchGradeSchool(s, randomGrade());
         s = s->next;
     }
@@ -170,7 +169,7 @@ int main()
     contClass2 = 0;
     contClass3 = 0;
     initRaList(raList);
-    while (countStudent <= 3)
+    while (countStudent <= 5)
     {
         s = schoolEnrollment(randomName(), randomGradeSchool());
         countStudent++;
